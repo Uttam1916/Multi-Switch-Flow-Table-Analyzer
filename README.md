@@ -129,4 +129,4 @@ mininet> iperf h1 h2
 ## References
 * Mininet Python API Documentation: http://mininet.org/api/
 * Ryu Controller Documentation: https://ryu.readthedocs.io/en/latest/
-* OpenFlow Switch Specification v1.0.0: https://opennetworking.org/wp-content/uploads/2013/04/openflow-spec-v1.0.0.pdf
+* OpenFlow Switch Specification v1.3.0: https://opennetworking.org/wp-content/uploads/2014/10/openflow-spec-v1.3.0.pdf
