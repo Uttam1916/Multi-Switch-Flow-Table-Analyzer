@@ -1,3 +1,3 @@
 #!/bin/bash
 echo "Starting Mininet Topology..."
-sudo python topology.py
+sudo python3 topology.py

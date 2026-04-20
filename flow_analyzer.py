@@ -39,10 +39,10 @@ class FlowAnalyzer(object):
                 if (srcip == "10.0.0.3" and dstip == "10.0.0.4") or (srcip == "10.0.0.4" and dstip == "10.0.0.3"):
                     # Install drop rule (no actions = drop)
                     msg = of.ofp_flow_mod()
-                    msg.match = of.ofp_match.from_packet(packet)
+                    msg.match = of.ofp_match.from_packet(packet, event.port)
                     msg.idle_timeout = 30
                     msg.hard_timeout = 60
-                    msg.buffer_id = packet_in.buffer_id
+                    msg.data = event.ofp
                     self.connection.send(msg)
                     log.info("Firewall: Dropped packet from %s to %s", srcip, dstip)
                     return
@@ -53,11 +53,11 @@ class FlowAnalyzer(object):
             
             # Install flow rule
             msg = of.ofp_flow_mod()
-            msg.match = of.ofp_match.from_packet(packet)
+            msg.match = of.ofp_match.from_packet(packet, event.port)
             msg.idle_timeout = 15
             msg.hard_timeout = 60
             msg.actions.append(of.ofp_action_output(port=port))
-            msg.buffer_id = packet_in.buffer_id
+            msg.data = event.ofp
             self.connection.send(msg)
             log.debug("Installed flow rule for %s -> %s", packet.src, packet.dst)
         else:
