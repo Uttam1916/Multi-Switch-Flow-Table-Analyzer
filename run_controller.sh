@@ -1,4 +1,3 @@
 #!/bin/bash
-echo "Starting POX Controller..."
-cd pox
-./pox.py flow_analyzer
+echo "Starting Ryu Controller..."
+ryu-manager ryu_flow_analyzer.py

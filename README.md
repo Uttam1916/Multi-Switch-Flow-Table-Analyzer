@@ -1,24 +1,24 @@
 # Multi-Switch Flow Table Analyzer
 
 ## Problem Statement
-The objective of this project is to implement an SDN-based solution using Mininet and the POX OpenFlow controller to demonstrate controller-switch interaction, OpenFlow flow rule design, and network behavior observation. Specifically, the project provides a dynamic Flow Table Analyzer that retrieves flow entries from multiple switches, identifies active versus unused flow rules, and continuously monitors network statistics. 
+The objective of this project is to implement an SDN-based solution using Mininet and the Ryu OpenFlow controller to demonstrate controller-switch interaction, OpenFlow flow rule design, and network behavior observation. Specifically, the project provides a dynamic Flow Table Analyzer that retrieves flow entries from multiple switches, identifies active versus unused flow rules, and continuously monitors network statistics. 
 
 The custom Mininet topology includes three switches (s1, s2, s3) and four hosts (h1, h2, h3, h4). The controller logic provides L2 forwarding and implements a specific firewall policy to block traffic between `h3` and `h4`.
 
 ## Prerequisites
 * Linux environment (Ubuntu recommended)
-* Python 2.7 or Python 3.x
+* Python 3.x
 * Mininet network emulator
-* POX controller
+* Ryu controller
 
 ## Setup and Execution Steps
 
 ### 1. Project Layout
-This project has been completely bundled for ease of use. The POX controller is included directly inside the `pox/` directory, and our custom `flow_analyzer.py` module is already placed in `pox/ext/`.
+This project has been completely bundled for ease of use. The controller logic is included directly in `ryu_flow_analyzer.py` which is executed natively by Ryu.
 Two convenience scripts have been added so you can run the project instantly without any manual configuration.
 
 ### 2. Starting the Controller
-Open a terminal and start the POX controller using the provided script:
+Open a terminal and start the Ryu controller using the provided script:
 ```bash
 ./run_controller.sh
 ```
@@ -29,7 +29,7 @@ Open a second terminal and start the custom Mininet topology using the provided 
 ```bash
 ./run_mininet.sh
 ```
-This will create the network, connect to the running POX controller, and open the Mininet command-line interface (CLI).
+This will create the network, connect to the running Ryu controller, and open the Mininet command-line interface (CLI).
 
 ## Expected Output and Testing Scenarios
 
@@ -57,28 +57,23 @@ This scenario demonstrates how the controller identifies rules that are actively
    ```text
    mininet> iperf h1 h2
    ```
-2. Observe the POX controller terminal output. The flow entries matching the `h1` to `h2` traffic will show increasing `Packets` and `Bytes` counts. The analyzer will mark their status as **Active**.
-3. Once the `iperf` test completes and traffic stops, wait a few seconds and observe the next output cycle from the POX controller. 
+2. Observe the Ryu controller terminal output. The flow entries matching the `h1` to `h2` traffic will show increasing `Packets` and `Bytes` counts. The analyzer will mark their status as **Active**.
+3. Once the `iperf` test completes and traffic stops, wait a few seconds and observe the next output cycle from the Ryu controller. 
 4. The packet count for those specific flow rules will stop increasing. The analyzer will detect this lack of change and mark the rule's status as **Unused**.
 5. After the `idle_timeout` expires (15 seconds), the OpenFlow switch will remove the rule from its table, and it will disappear from the controller's dynamically printed table.
 
 ## Proof of Execution (Execution Logs)
 
-### 1. Flow Tables (POX Controller Output)
-Below is the log from the POX controller running the `flow_analyzer.py` module during the ping and iperf tests. It actively monitors rules and identifies the traffic flow.
+### 1. Flow Tables (Ryu Controller Output)
+Below is the log from the Ryu controller running the `ryu_flow_analyzer.py` module during the ping and iperf tests. It actively monitors rules and identifies the traffic flow.
 
 ```text
-INFO:core:POX 0.2.8 (dart) is up.
-INFO:openflow.of_01:[00-00-00-00-00-01 1] connected
-INFO:openflow.of_01:[00-00-00-00-00-02 2] connected
-INFO:openflow.of_01:[00-00-00-00-00-03 3] connected
-INFO:flow_analyzer:Starting Flow Analyzer on Switch 00-00-00-00-00-01
-INFO:flow_analyzer:Starting Flow Analyzer on Switch 00-00-00-00-00-02
-INFO:flow_analyzer:Starting Flow Analyzer on Switch 00-00-00-00-00-03
-INFO:flow_analyzer:Flow Table Analyzer module loaded successfully.
+INFO:flow_analyzer:Connected to switch DPID 1
+INFO:flow_analyzer:Connected to switch DPID 2
+INFO:flow_analyzer:Connected to switch DPID 3
 
 ==============================================================================================================
- Switch DPID: 00-00-00-00-00-01 
+ Switch DPID: 1 
 ==============================================================================================================
 Match Criteria                                          | Actions         | Packets    | Bytes      | Status    
 --------------------------------------------------------------------------------------------------------------
@@ -89,7 +84,7 @@ in_port=2,dl_src=00:00:00:00:00:02,dl_dst=00:00:00:00...| OUTPUT:1        | 3524
 INFO:flow_analyzer:Firewall: Dropped packet from 10.0.0.3 to 10.0.0.4
 
 ==============================================================================================================
- Switch DPID: 00-00-00-00-00-01 
+ Switch DPID: 1 
 ==============================================================================================================
 Match Criteria                                          | Actions         | Packets    | Bytes      | Status    
 --------------------------------------------------------------------------------------------------------------
@@ -133,5 +128,5 @@ mininet> iperf h1 h2
 
 ## References
 * Mininet Python API Documentation: http://mininet.org/api/
-* POX Controller Documentation: https://noxrepo.github.io/pox-doc/html/
+* Ryu Controller Documentation: https://ryu.readthedocs.io/en/latest/
 * OpenFlow Switch Specification v1.0.0: https://opennetworking.org/wp-content/uploads/2013/04/openflow-spec-v1.0.0.pdf

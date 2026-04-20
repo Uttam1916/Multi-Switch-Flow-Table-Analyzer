@@ -16,9 +16,9 @@ def create_topology():
     c0 = net.addController('c0', controller=RemoteController, ip='127.0.0.1', port=6633)
     
     info('*** Adding Switches ***\n')
-    s1 = net.addSwitch('s1', protocols='OpenFlow10')
-    s2 = net.addSwitch('s2', protocols='OpenFlow10')
-    s3 = net.addSwitch('s3', protocols='OpenFlow10')
+    s1 = net.addSwitch('s1', protocols='OpenFlow13')
+    s2 = net.addSwitch('s2', protocols='OpenFlow13')
+    s3 = net.addSwitch('s3', protocols='OpenFlow13')
     
     info('*** Adding Hosts ***\n')
     h1 = net.addHost('h1', ip='10.0.0.1/24', mac='00:00:00:00:00:01')
